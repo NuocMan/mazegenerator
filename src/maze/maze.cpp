@@ -120,3 +120,36 @@ void Maze::PrintMazeSVG(const std::string& outputprefix, bool solution) const {
   svgfile << "</g>" << std::endl;
   svgfile << "</svg>" << std::endl;
 }
+
+void Maze::PrintMazeJSON(const std::string& outputprefix) const {
+  std::ofstream jsonfile(outputprefix + ".json");
+  if (!jsonfile) {
+    std::cerr << "Error opening " << outputprefix << ".json for writing.\n";
+    std::cerr << "Terminating.";
+    exit(1);
+  }
+  double xmin, ymin, xmax, ymax;
+  std::tie(xmin, ymin, xmax, ymax) = GetCoordinateBounds();
+
+  jsonfile << "{" << std::endl;
+
+  jsonfile << "\t\"cells\": [" << std::endl;
+  for (int i = 0; i < vertices_; ++i) {
+    std::vector<Edge> adjacents = adjacencylist_[i];
+
+    jsonfile << "\t\t{" << std::endl;
+    jsonfile << "\t\t\t\"adjacents\": [";
+
+    if (adjacents.begin() != adjacents.end()) {
+      jsonfile << std::get<0>(*adjacents.begin());
+      for (std::vector<Edge>::iterator it = ++adjacents.begin(); it != adjacents.end(); ++it) {
+        jsonfile << ", " << std::get<0>(*it);
+      }
+    }
+    jsonfile << "]" << std::endl;
+    jsonfile << "\t\t}" << (i + 1 == vertices_ ? "" : ",") << std::endl;
+  }
+  jsonfile << "\t]" << std::endl;
+
+  jsonfile << "}" << std::endl;
+}

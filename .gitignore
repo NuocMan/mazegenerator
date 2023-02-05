@@ -1,7 +1,13 @@
 mazegen
 *.swp
 tags
-*.plt
 *.o
+
+*.json
+*.svg
+*.plt
+
 examples/*_*.png
 examples/*_*.svg
+
+.vscode

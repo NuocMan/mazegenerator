@@ -61,6 +61,8 @@ void usage(std::ostream &out) {
       << "0: svg output (default)" << std::endl;
   out << "          "
       << "1: png output using gnuplot (.plt) intermediate " << std::endl;
+  out << "          "
+      << "2: json output (.json) intermediate " << std::endl;
   out << "  -o      "
       << "Prefix for .svg, .plt and .png outputs (default: maze)" << std::endl;
 }
@@ -227,27 +229,36 @@ int main(int argc, char *argv[]) {
       return 1;
   }
 
-  if (optionmap["-t"] < 0 or optionmap["-t"] > 1) {
-    std::cerr << "Unknown output type " << optionmap["-a"];
-    usage(std::cerr);
-    return 1;
-  }
-
   std::cout << "Initialising graph..." << std::endl;
   maze->InitialiseGraph();
   std::cout << "Generating maze..." << std::endl;
   maze->GenerateMaze(algorithm);
-  if (optionmap["-t"] == 0) {
+
+  switch (optionmap["-t"])
+  {
+  case 0:
     std::cout << "Rendering maze to '" << outputprefix << ".svg'..."
               << std::endl;
     maze->PrintMazeSVG(outputprefix);
-  } else {
+    break;
+  case 1:
     std::cout << "Exporting maze plotting parameters to '" << outputprefix
               << ".plt' ..." << std::endl;
     maze->PrintMazeGnuplot(outputprefix);
     std::cout << "Rendering maze to '" << outputprefix
               << ".png' using gnuplot..." << std::endl;
     system(("gnuplot '" + outputprefix + ".plt'").c_str());
+    break;
+  case 2:
+    std::cout << "Rendering maze to '" << outputprefix << ".json'..."
+              << std::endl;
+    maze->PrintMazeJSON(outputprefix);
+    break;
+  default:
+    std::cerr << "Unknown output type " << optionmap["-t"];
+    usage(std::cerr);
+    return 1;
   }
+
   return 0;
 }
