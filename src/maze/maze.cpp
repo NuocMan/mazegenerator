@@ -138,6 +138,12 @@ void Maze::PrintMazeJSON(const std::string& outputprefix) const {
     std::vector<Edge> adjacents = adjacencylist_[i];
 
     jsonfile << "\t\t{" << std::endl;
+    if (i == startvertex_) {
+      jsonfile << "\t\t\t\"start\": true," << std::endl;
+    } else if (i == endvertex_) {
+      jsonfile << "\t\t\t\"end\": true," << std::endl;
+    }
+
     jsonfile << "\t\t\t\"adjacents\": [";
 
     if (adjacents.begin() != adjacents.end()) {
